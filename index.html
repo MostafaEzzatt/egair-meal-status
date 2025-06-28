@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Excel Data Viewer (Dark Mode)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="bg-gray-900 text-gray-100 p-8 font-sans">
+    <div class="max-w-7xl mx-auto bg-gray-800 p-6 rounded-lg shadow-xl">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-3xl font-black text-white">
+          EgyptAir Meals Statistics
+        </h1>
+
+        <div>
+          <label class="font-semibold">
+            <input type="checkbox" id="dat" checked />
+            Show Dat
+          </label>
+        </div>
+      </div>
+
+      <!-- Navigation for main Excel files -->
+      <div
+        id="file-tabs-nav"
+        class="flex flex-wrap gap-2 mb-4 border-b border-gray-600"
+      ></div>
+
+      <!-- Content area for each Excel file -->
+      <div id="file-tabs-content" class="min-h-[400px]">
+        <p class="text-center text-gray-400" id="loading-message">
+          Loading Excel files...
+        </p>
+      </div>
+
+      <!-- Single, persistent chart area -->
+      <div id="mainChartArea" class="chart-container mt-6">
+        <canvas id="mainChartCanvas"></canvas>
+        <p
+          id="noChartDataMessage"
+          class="text-center text-gray-400 mt-4 text-sm hidden"
+        >
+          No numeric columns with non-zero sums found to generate a chart for
+          this sheet.
+        </p>
+      </div>
+    </div>
+
+    <!-- Breakdown Dialog -->
+    <div
+      id="breakdownDialog"
+      class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+    >
+      <div
+        class="bg-gray-700 rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto flex flex-col"
+      >
+        <div
+          class="flex justify-between items-center p-4 border-b border-gray-600"
+        >
+          <h2 id="breakdownDialogTitle" class="text-xl font-bold text-white">
+            Column Breakdown
+          </h2>
+          <button
+            id="closeBreakdownDialog"
+            class="text-gray-400 hover:text-white text-3xl leading-none font-semibold"
+          >
+            &times;
+          </button>
+        </div>
+        <div id="breakdownDialogContent" class="p-4 flex-grow"></div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

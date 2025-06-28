@@ -1,0 +1,112 @@
+/* Custom scrollbar for tables */
+.table-container {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #4a5568; /* darker gray border */
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  border: 1px solid #4a5568; /* darker gray border */
+  padding: 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+  color: #e2e8f0; /* light gray text for table content */
+}
+th {
+  background-color: #4a5568; /* dark gray for headers */
+  color: #f7fafc; /* very light text for header */
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+tr:nth-child(even) {
+  background-color: #3b4250; /* slightly different shade for even rows */
+}
+tr {
+  background-color: #2d3748; /* default row background */
+}
+.error-message {
+  color: #fed7aa; /* text-orange-200 */
+  background-color: #991b1b; /* bg-red-800 */
+  font-weight: bold;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+/* Custom styles for tabs */
+.tab-button {
+  padding: 0.5rem 1rem;
+  background-color: #4a5568; /* dark gray for inactive tabs */
+  color: #cbd5e0; /* light gray text */
+  font-weight: 600;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  transition-property: background-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tab-button.active {
+  background-color: #2563eb; /* blue-600, same as before for active accent */
+  color: #ffffff;
+}
+.tab-content {
+  padding: 1rem;
+  border-width: 1px;
+  border-color: #4a5568; /* dark gray border */
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  background-color: #2d3748; /* dark gray content background */
+  color: #e2e8f0; /* light gray text for content */
+}
+.tab-content.hidden {
+  display: none;
+}
+
+/* Specific styles for inner sheet tabs */
+.sheet-tab-button {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  background-color: #2d3748; /* dark background for inactive sheet tabs */
+  color: #cbd5e0; /* light gray text */
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+  transition-property: background-color, color;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+.sheet-tab-button.active {
+  background-color: #3b82f6; /* blue-500, same as before for active accent */
+  color: #ffffff;
+}
+.sheet-tab-content {
+  padding: 0;
+  /* Add background and text color for sheet content area */
+  background-color: #2d3748; /* Same as tab-content background */
+  color: #e2e8f0;
+}
+.sheet-tab-content.hidden {
+  display: none;
+}
+
+/* Add a max-width to the canvas to make charts responsive within their container */
+.chart-container {
+  position: relative;
+  margin: auto;
+  height: 300px;
+  width: 100%;
+  padding-top: 1rem;
+}
+
+/* Adjust text for "No numeric columns..." message */
+.sheet-tab-content p {
+  color: #a0aec0; /* gray-400 */
+}
