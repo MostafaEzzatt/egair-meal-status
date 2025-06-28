@@ -57,8 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Configuration (Your Excel Files) ---
   const excelFilesToLoad = [
-    "/Data/Forign_By_meal.xlsx",
-    "/Data/Total.xlsx",
+    "https://mostafaezzatt.github.io/egair-meal-status/Data/Forign_By_meal.xlsx",
+    "https://mostafaezzatt.github.io/egair-meal-status/Data/Total.xlsx",
+    // "/Data/Forign_By_meal.xlsx",
+    // "/Data/Total.xlsx",
     // Add more Excel file paths as needed.
   ];
 
