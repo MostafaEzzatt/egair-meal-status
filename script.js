@@ -347,7 +347,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dataRows = rawData.slice(1);
 
     dataRows.forEach((row, rowIndex) => {
-      if (row[0] == "dat" && showDAT) return;
+      if (row[0] == "dat" && !showDAT) return;
       const rowLabel =
         row[0] !== undefined && row[0] !== null
           ? String(row[0]).toUpperCase()
@@ -411,7 +411,8 @@ document.addEventListener("DOMContentLoaded", () => {
       headerValue.textContent = "Value";
       gridContainer.appendChild(headerValue);
 
-      nonZeroValuesWithLabels.slice(0, 50).forEach((item) => {
+      // nonZeroValuesWithLabels.slice(0, 50).forEach((item) => {
+      nonZeroValuesWithLabels.forEach((item) => {
         // Create div for label
         const labelDiv = document.createElement("div");
         labelDiv.className = "text-right pr-2"; // Align label to right
@@ -428,14 +429,14 @@ document.addEventListener("DOMContentLoaded", () => {
         gridContainer.appendChild(valueDiv);
       });
 
-      if (nonZeroValuesWithLabels.length > 50) {
-        const ellipsisDiv = document.createElement("div");
-        ellipsisDiv.className = "col-span-2 text-center text-gray-400 pt-2"; // Span both columns
-        ellipsisDiv.textContent = `...and ${
-          nonZeroValuesWithLabels.length - 50
-        } more non-zero entries.`;
-        gridContainer.appendChild(ellipsisDiv);
-      }
+      // if (nonZeroValuesWithLabels.length > 50) {
+      //   const ellipsisDiv = document.createElement("div");
+      //   ellipsisDiv.className = "col-span-2 text-center text-gray-400 pt-2"; // Span both columns
+      //   ellipsisDiv.textContent = `...and ${
+      //     nonZeroValuesWithLabels.length - 50
+      //   } more non-zero entries.`;
+      //   gridContainer.appendChild(ellipsisDiv);
+      // }
       breakdownDialogContent.appendChild(gridContainer); // Append the grid container
     } else {
       const noValuesMessage = document.createElement("p");
@@ -494,7 +495,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const fileTabButton = document.createElement("button");
       fileTabButton.className = "tab-button";
-      fileTabButton.textContent = fileName;
+      fileTabButton.textContent = fileName
+        .replace(/[_-]/g, " ")
+        .replace(".xlsx", "");
       fileTabButton.dataset.fileIndex = fileIndex;
       fileTabButton.addEventListener("click", () => activateFileTab(fileIndex));
       fileTabsNav.appendChild(fileTabButton);
