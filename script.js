@@ -4,9 +4,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const fileTabsContent = document.getElementById("file-tabs-content");
   const loadingMessage = document.getElementById("loading-message");
   const showDATCheckbox = document.getElementById("dat");
+  const showTableCheckbox = document.getElementById("table-togle");
   let showDAT = true;
   let isDATCalculated = false;
 
+  showTableCheckbox.addEventListener("change", (event) => {
+    showTable = event.target.checked;
+    console.log(document.querySelector(".file-tabs-content"));
+    if (showTable) {
+      document.querySelector("#file-tabs-content").classList.remove("hidden");
+    } else {
+      document.querySelector("#file-tabs-content").classList.add("hidden");
+    }
+
+    console.log(showTable);
+  });
   showDATCheckbox.addEventListener("change", (event) => {
     showDAT = event.target.checked;
     // If DAT checkbox is toggled, re-render the current chart with the updated setting
@@ -390,8 +402,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }</p>
             <p class="text-sm"><strong>Non-Zero Numeric Values:</strong> ${numericCount}</p>
             <p class="text-sm"><strong>Total Sum (Non-Zero):</strong> ${sum.toLocaleString()}</p>
-            <p class="text-sm"><strong>Non-Numeric Entries:</strong> ${nonNumericCount}</p>
-        `;
+            `;
+    // <p class="text-sm"><strong>Non-Numeric Entries:</strong> ${nonNumericCount}</p>
     breakdownDialogContent.appendChild(summaryDiv);
 
     if (nonZeroValuesWithLabels.length > 0) {
@@ -659,7 +671,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //   raw: true,
         // });
 
-        sheetContentDiv.innerHTML = `<div class="table-container">${htmlTable}</div>`;
+        sheetContentDiv.innerHTML = `<div class="table-container tb-toggler">${htmlTable}</div>`;
         sheetContentDiv.querySelector("tr").remove();
 
         // Note: Dynamic chart creation for each sheet is removed from here.
