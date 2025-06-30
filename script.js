@@ -10,14 +10,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   showTableCheckbox.addEventListener("change", (event) => {
     showTable = event.target.checked;
-    console.log(document.querySelector(".file-tabs-content"));
-    if (showTable) {
-      document.querySelector("#file-tabs-content").classList.remove("hidden");
-    } else {
-      document.querySelector("#file-tabs-content").classList.add("hidden");
-    }
+    const tableContainer = document.querySelectorAll(
+      ".table-container.tb-toggler"
+    );
 
-    console.log(showTable);
+    tableContainer.forEach((elem) => {
+      console.log(elem);
+      if (showTable) {
+        elem.classList.remove("hidden");
+      } else {
+        elem.classList.add("hidden");
+      }
+    });
   });
   showDATCheckbox.addEventListener("change", (event) => {
     showDAT = event.target.checked;
@@ -69,11 +73,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // --- Configuration (Your Excel Files) ---
   const excelFilesToLoad = [
-    "https://mostafaezzatt.github.io/egair-meal-status/Data/Forign_By_meal.xlsx",
-    "https://mostafaezzatt.github.io/egair-meal-status/Data/Total.xlsx",
-    // "/Data/Forign_By_meal.xlsx",
-    // "/Data/Total.xlsx",
-    // Add more Excel file paths as needed.
+    "https://mostafaezzatt.github.io/egair-meal-status/Data/Total_Flights_PerMonth.xlsx",
+    "https://mostafaezzatt.github.io/egair-meal-status/Data/Total_MS_And_Forign_meals.xlsx",
+    "https://mostafaezzatt.github.io/egair-meal-status/Data/Forign_By_Month.xlsx",
+    // "Data/Total_Flights_PerMonth.xlsx",
+    // "Data/Total_MS_And_Forign_meals.xlsx",
+    // "Data/Forign_By_Month.xlsx",
   ];
 
   // --- Global Data Store ---
@@ -379,7 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
           isNumeric = true;
         }
       }
-      console.log(row);
+
       if (isNumeric) {
         if (numValue !== 0) {
           numericCount++;
@@ -613,7 +618,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const chartLabels = [];
         const chartValues = [];
-        headers.forEach((header) => {
+        headers.forEach((header, idx) => {
+          if (idx === 0) return; // Skip the first column
           const info = columnInfo[header];
           if (info && info.hasNumeric && info.sum !== 0) {
             chartLabels.push(header);
