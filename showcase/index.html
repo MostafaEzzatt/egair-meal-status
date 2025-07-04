@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>لوحة تحليل الأداء التفاعلية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Cairo", sans-serif;
+      }
+      .chart-container {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+        height: 45vh;
+        max-height: 450px;
+      }
+      @media (max-width: 768px) {
+        .chart-container {
+          height: 40vh;
+          max-height: 350px;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-[#111827] text-[#F9FAFB]">
+    <!-- Chosen Palette: Cool Dusk -->
+    <!-- Application Structure Plan: A top-down interactive dashboard. It starts with a header, followed by global month-based filters that control the entire application's state. Below are the key performance indicators (KPIs) and thematic sections (Flights, Delays, Meals), which all dynamically update based on the selected filter. This structure provides a clear, intuitive user flow for drilling down into the data, moving from a high-level overview to a specific monthly analysis seamlessly. -->
+    <!-- Visualization & Content Choices:
+        - Global Filters (HTML Buttons): Goal: Control the view. Viz: Buttons. Interaction: Click. Justification: Standard, intuitive UI for filtering.
+        - KPIs (Dynamic Text): Goal: Provide a quick summary. Viz: Large numbers in cards. Interaction: Text updates on filter change. Justification: Immediate high-level feedback for the user.
+        - Monthly Data (Bar Charts via Chart.js): Goal: Compare quantities across months and categories. Viz: Bar/Stacked Bar charts. Interaction: Chart data updates on filter change. Justification: Bar charts are ideal for this type of comparison.
+        - All interactions are powered by Vanilla JS, using a central state object and an update function for consistency.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <div class="container mx-auto p-4 md:p-8">
+      <header class="text-center mb-8">
+        <h1 class="text-4xl md:text-5xl font-black text-[#60A5FA]">
+          تحليل أداء العمليات الشهرية
+        </h1>
+        <p class="text-lg text-[#9CA3AF] mt-2">
+          لوحة تحكم تفاعلية تتيح استكشاف بيانات الأداء من يناير إلى مايو
+        </p>
+      </header>
+
+      <!-- <section id="filters" class="mb-8 p-4 bg-[#1F2937] rounded-lg shadow-lg">
+            <h2 class="text-xl font-bold mb-4 text-center text-[#9CA3AF]">اختر فترة العرض</h2>
+            <div id="month-filters" class="flex flex-wrap justify-center gap-3">
+            </div>
+        </section> -->
+      <div class="max-w-5xl mx-auto">
+        <section id="kpis" class="mb-12">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div
+              class="bg-[#1F2937] p-6 rounded-lg shadow-lg text-center transition-transform duration-300 hover:scale-105"
+            >
+              <div
+                id="kpi-total-flights"
+                class="text-5xl font-black text-[#34D399]"
+              ></div>
+              <div class="text-lg mt-2 text-[#9CA3AF]">إجمالي الرحلات</div>
+            </div>
+            <div
+              class="bg-[#1F2937] p-6 rounded-lg shadow-lg text-center transition-transform duration-300 hover:scale-105"
+            >
+              <div
+                id="kpi-total-delays"
+                class="text-5xl font-black text-[#FBBF24]"
+              ></div>
+              <div class="text-lg mt-2 text-[#9CA3AF]">
+                إجمالي حوادث التأخير
+              </div>
+            </div>
+            <div
+              class="bg-[#1F2937] p-6 rounded-lg shadow-lg text-center transition-transform duration-300 hover:scale-105"
+            >
+              <div
+                id="kpi-total-delay-minutes"
+                class="text-5xl font-black text-[#F87171]"
+              ></div>
+              <div class="text-lg mt-2 text-[#9CA3AF]">
+                إجمالي دقائق التأخير
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <main class="space-y-12">
+          <div class="bg-[#1F2937] p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-1 text-[#60A5FA]">
+              تحليل عدد الرحلات
+            </h2>
+            <p class="text-[#9CA3AF] mb-6">
+              يقارن الرسم البياني عدد الرحلات شهريًا بين شركة مصر للطيران
+              والشركات الأخرى. استخدم الفلاتر أعلاه لعرض شهر محدد.
+            </p>
+            <div class="chart-container">
+              <canvas id="flightsChart"></canvas>
+            </div>
+          </div>
+
+          <div class="bg-[#1F2937] p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-1 text-[#60A5FA]">
+              تحليل تأخيرات الرحلات
+            </h2>
+            <p class="text-[#9CA3AF] mb-6">
+              توضح الرسوم البيانية عدد حوادث التأخير ومدتها بالدقائق لكل شهر.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div class="chart-container">
+                <canvas id="delayCountChart"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas id="delayMinutesChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[#1F2937] p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-1 text-[#60A5FA]">
+              تحليل استهلاك الوجبات
+            </h2>
+            <p class="text-[#9CA3AF] mb-6">
+              يستعرض الرسم البياني عدد الوجبات المستهلكة شهرياً لكل فئة.
+            </p>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              <div class="chart-container">
+                <canvas id="mealsChart"></canvas>
+              </div>
+              <div class="chart-container">
+                <canvas id="mealsChartFR"></canvas>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const chartInstances = {};
+      const allData = {
+        labels: ["يناير", "فبراير", "مارس", "أبريل", "مايو"],
+        flights: {
+          egyptair: [3416, 3031, 3234, 3444, 3368],
+          other: [1570, 1508, 1524, 1556, 1386],
+        },
+        delays: {
+          count: [10, 0, 0, 8, 7],
+          minutes: [225, 0, 0, 120, 154],
+        },
+        meals: {
+          egyptair: [499719, 450270, 443140, 491732, 410541],
+          other: [10673, 10730, 10919, 11126, 7761],
+        },
+      };
+
+      const chartColors = {
+        emerald: "#34D399",
+        red: "#F87171",
+        amber: "#FBBF24",
+        violet: "#A78BFA",
+        blue: "#60A5FA",
+      };
+
+      const defaultChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { font: { family: "Cairo" }, color: "#F9FAFB" } },
+          tooltip: {
+            bodyFont: { family: "Cairo" },
+            titleFont: { family: "Cairo" },
+          },
+        },
+        scales: {
+          x: {
+            ticks: { font: { family: "Cairo" }, color: "#9CA3AF" },
+            grid: { color: "rgba(255, 255, 255, 0.1)" },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { font: { family: "Cairo" }, color: "#9CA3AF" },
+            grid: { color: "rgba(255, 255, 255, 0.1)" },
+          },
+        },
+      };
+
+      const createChart = (ctx, type, data, options) => {
+        return new Chart(ctx, {
+          type,
+          data,
+          options: { ...defaultChartOptions, ...options },
+        });
+      };
+
+      function setupCharts() {
+        let flightsOptions = { ...defaultChartOptions };
+        flightsOptions = {
+          ...flightsOptions,
+          scales: {
+            ...flightsOptions.scales,
+            x: { ...flightsOptions.scales.x, stacked: true },
+            y: { ...flightsOptions.scales.y, stacked: true },
+          },
+        };
+        chartInstances.flights = createChart(
+          document.getElementById("flightsChart").getContext("2d"),
+          "bar",
+          {
+            labels: [],
+            datasets: [
+              {
+                label: "شركة مصر للطيران",
+                data: [],
+                backgroundColor: chartColors.blue,
+              },
+              {
+                label: "الشركات الاخرى",
+                data: [],
+                backgroundColor: chartColors.violet,
+              },
+            ],
+          },
+          flightsOptions
+        );
+        chartInstances.delayCount = createChart(
+          document.getElementById("delayCountChart").getContext("2d"),
+          "bar",
+          {
+            labels: [],
+            datasets: [
+              {
+                label: "عدد التأخيرات",
+                data: [],
+                backgroundColor: chartColors.amber,
+              },
+            ],
+          }
+        );
+        chartInstances.delayMinutes = createChart(
+          document.getElementById("delayMinutesChart").getContext("2d"),
+          "bar",
+          {
+            labels: [],
+            datasets: [
+              {
+                label: "مدة التأخير (بالدقائق)",
+                data: [],
+                backgroundColor: chartColors.red,
+              },
+            ],
+          }
+        );
+        chartInstances.meals = createChart(
+          document.getElementById("mealsChart").getContext("2d"),
+          "bar",
+          {
+            labels: [],
+            datasets: [
+              {
+                label: "وجبات شركة مصر للطيران",
+                data: [],
+                backgroundColor: chartColors.emerald,
+              },
+            ],
+          }
+        );
+        chartInstances.mealsFR = createChart(
+          document.getElementById("mealsChartFR").getContext("2d"),
+          "bar",
+          {
+            labels: [],
+            datasets: [
+              {
+                label: "وجبات الشركات الاخرى",
+                data: [],
+                backgroundColor: chartColors.blue,
+              },
+            ],
+          }
+        );
+      }
+
+      function updateDashboard(selectedMonth = "All") {
+        const indices =
+          selectedMonth === "All"
+            ? allData.labels.map((_, i) => i)
+            : [allData.labels.indexOf(selectedMonth)];
+        const currentLabels =
+          selectedMonth === "All" ? allData.labels : [selectedMonth];
+
+        const filterData = (dataArray) => indices.map((i) => dataArray[i]);
+        const sumData = (dataArray) =>
+          filterData(dataArray).reduce((a, b) => a + b, 0);
+
+        document.getElementById("kpi-total-flights").textContent = (
+          sumData(allData.flights.egyptair) + sumData(allData.flights.other)
+        ).toLocaleString();
+        document.getElementById("kpi-total-delays").textContent = sumData(
+          allData.delays.count
+        ).toLocaleString();
+        document.getElementById("kpi-total-delay-minutes").textContent =
+          sumData(allData.delays.minutes).toLocaleString();
+
+        const updateChartData = (chart, newLabels, datasets) => {
+          chart.data.labels = newLabels;
+          chart.data.datasets.forEach((d, i) => {
+            d.data = datasets[i];
+          });
+          chart.update();
+        };
+
+        updateChartData(chartInstances.flights, currentLabels, [
+          filterData(allData.flights.egyptair),
+          filterData(allData.flights.other),
+        ]);
+        updateChartData(chartInstances.delayCount, currentLabels, [
+          filterData(allData.delays.count),
+        ]);
+        updateChartData(chartInstances.delayMinutes, currentLabels, [
+          filterData(allData.delays.minutes),
+        ]);
+        updateChartData(chartInstances.meals, currentLabels, [
+          filterData(allData.meals.egyptair),
+        ]);
+        updateChartData(chartInstances.mealsFR, currentLabels, [
+          filterData(allData.meals.other),
+        ]);
+
+        document.querySelectorAll("#month-filters button").forEach((button) => {
+          if (button.dataset.month === selectedMonth) {
+            button.classList.remove(
+              "bg-transparent",
+              "text-[#60A5FA]",
+              "hover:bg-[#60A5FA]",
+              "hover:text-white"
+            );
+            button.classList.add("bg-[#60A5FA]", "text-white");
+          } else {
+            button.classList.remove("bg-[#60A5FA]", "text-white");
+            button.classList.add(
+              "bg-transparent",
+              "text-[#60A5FA]",
+              "hover:bg-[#60A5FA]",
+              "hover:text-white"
+            );
+          }
+        });
+      }
+
+      function setupFilters() {
+        const filterContainer = document.getElementById("month-filters");
+        const months = ["All", ...allData.labels];
+        const monthNames = {
+          All: "عرض الكل",
+          يناير: "يناير",
+          فبراير: "فبراير",
+          مارس: "مارس",
+          أبريل: "أبريل",
+          مايو: "مايو",
+        };
+
+        months.forEach((month) => {
+          const button = document.createElement("button");
+          button.textContent = monthNames[month];
+          button.dataset.month = month;
+          button.className =
+            "px-4 py-2 font-bold border-2 border-[#60A5FA] rounded-full transition-colors duration-300";
+          button.addEventListener("click", () => updateDashboard(month));
+          filterContainer.appendChild(button);
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        setupCharts();
+        // setupFilters();
+        updateDashboard("All");
+      });
+    </script>
+  </body>
+</html>
